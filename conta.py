@@ -16,7 +16,7 @@ class Conta:
         self.tipo_conta = tipo_conta
         self.instituicao_financeira = instituicao_financeira
 
-    def cadastrar_conta(self):
+    def criar_tabela_conta():
         conexao = sqlite3.connect("controleFinancas.bd")
         cursor = conexao.cursor()
         cursor.execute("""
@@ -29,7 +29,16 @@ class Conta:
         conexao.commit()
         conexao.close()
 
-    @staticmethod
+    def salvar_conta(self):
+        """Insere os dados da conta na tabela do Banco de Dados
+        """
+        conta = (self.saldo, self.tipo_conta, self.instituicao_financeira)
+        conexao = sqlite3.connect("controleFinancas.bd")
+        cursor = conexao.cursor()
+        cursor.execute("""insert into conta values (null, ?, ?, ?)""", conta)
+        conexao.commit()
+        conexao.close()
+
     def editar_conta(id_conta, opcao, valor):
         opcoes = {1:"saldo", 2:"tipoConta", 3:"instituicaoFinanceira"}
         conexao = sqlite3.connect("controleFinancas.bd")
@@ -44,7 +53,6 @@ class Conta:
         conexao.commit()
         conexao.close()
 
-    @staticmethod
     def remover_conta(id_conta):
         conexao = sqlite3.connect("controleFinancas.bd")
         cursor = conexao.cursor()
@@ -58,7 +66,6 @@ class Conta:
         conexao.commit()
         conexao.close()
 
-    @staticmethod
     def listar_contas():
         conexao = sqlite3.connect("controleFinancas.bd")
         cursor = conexao.cursor()
@@ -67,15 +74,21 @@ class Conta:
         conexao.commit()
         conexao.close()
     
-    def tranferir_saldo(self, id_conta1, valor, id_conta2):
+    def tranferir_saldo(id_conta1, valor, id_conta2):
         conexao = sqlite3.connect("controleFinancas.bd")
         cursor = conexao.cursor()
-        novo_saldo1 = cursor.execute("select saldo + ? from conta where \
+        novo_saldo1 = cursor.execute("select saldo - ? from conta where \
         idConta = ?", (valor, id_conta1))
-        self.editar_conta(id_conta1, 1, novo_saldo1)
-        novo_saldo2 = cursor.execute("select saldo - ? from conta where \
+        novo_saldo1 = cursor.fetchone()[0]
+        novo_saldo2 = cursor.execute("select saldo + ? from conta where \
         idConta = ?", (valor, id_conta2))
-        self.editar_conta(id_conta2, 1, novo_saldo2)
+        novo_saldo2 = cursor.fetchone()[0]
+
+        if novo_saldo1 < 0:
+            print("Saldo Insuficiente")
+        else:
+            Conta.editar_conta(id_conta1, 1, novo_saldo1)
+            Conta.editar_conta(id_conta2, 1, novo_saldo2)
         conexao.commit()
         conexao.close()
 
@@ -84,5 +97,31 @@ class Conta:
         cursor = conexao.cursor()
         saldo = cursor.execute("select saldo from conta where idConta = ?", 
         (id_conta, ))
+        saldo = cursor.fetchone()[0]
         conexao.commit()
         conexao.close()
+        print(f"Saldo total: {saldo}.")
+
+if __name__ == "__main__":
+    opcao = None
+    while opcao != "0":
+        opcao = input("Digite o número correspondente à função: ")
+        match opcao:
+            case "1":
+                Conta.criar_tabela_conta()
+                conta1 = Conta(10.00, "poupança", "pessoal")
+                conta2 = Conta(20.50, "conta corrente", "publica")
+                conta3 = Conta(30.00, "conta corrente", "banco")
+                conta1.salvar_conta()
+                conta2.salvar_conta()
+                conta3.salvar_conta()
+            case "2":
+                Conta.editar_conta(1,1,15)
+            case "3":
+                Conta.remover_conta(3)
+            case "4":
+                Conta.listar_contas()
+            case "5":
+                Conta.tranferir_saldo(1,5,2)
+            case "6":
+                Conta.listar_saldo(1)
