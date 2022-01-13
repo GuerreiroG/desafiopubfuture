@@ -77,10 +77,10 @@ class Conta:
     def tranferir_saldo(id_conta1, valor, id_conta2):
         conexao = sqlite3.connect("controleFinancas.bd")
         cursor = conexao.cursor()
-        novo_saldo1 = cursor.execute("select saldo - ? from conta where \
+        cursor.execute("select saldo - ? from conta where \
         idConta = ?", (valor, id_conta1))
         novo_saldo1 = cursor.fetchone()[0]
-        novo_saldo2 = cursor.execute("select saldo + ? from conta where \
+        cursor.execute("select saldo + ? from conta where \
         idConta = ?", (valor, id_conta2))
         novo_saldo2 = cursor.fetchone()[0]
 
@@ -95,7 +95,7 @@ class Conta:
     def listar_saldo(id_conta):
         conexao = sqlite3.connect("controleFinancas.bd")
         cursor = conexao.cursor()
-        saldo = cursor.execute("select saldo from conta where idConta = ?", 
+        cursor.execute("select saldo from conta where idConta = ?", 
         (id_conta, ))
         saldo = cursor.fetchone()[0]
         conexao.commit()
