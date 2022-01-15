@@ -75,7 +75,7 @@ class Receita:
         receita = cursor.execute("select * from receita where idReceita = ?", 
         (id_receita, )).fetchone()
         if receita is None:
-            print("Conta inexistente!")
+            print("Receita inexistente!")
         else:
             cursor.execute("delete from receita where idReceita = ?",
             (id_receita, ))
