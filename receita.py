@@ -8,10 +8,24 @@ import sqlite3
 import conta
 
 class Receita:
-
+    """A classe receita representa uma receita, possuindo características e 
+    métodos
+    """
     def __init__(self, valor: float, data_recebimento: str, 
     data_recebimento_esperado: str, descricao: str, conta: int, 
     tipo_receita: str):
+        """Cria uma instância do classe Receita.
+
+        Args:
+            valor (float): Valor da receita.
+            data_recebimento (str): Data em que o dinheiro foi recebido.
+            data_recebimento_esperado (str): Data em que se esperava receber o
+            dinheiro.
+            descricao (str): Descrição da receita.
+            conta (int): Número de identificação da conta que recebeu o 
+            dinheiro da receita.
+            tipo_receita (str): Tipo da receita (Ex: Salário, presente, prêmio).
+        """
         self.valor = valor
         self.data_recebimento = data_recebimento
         self.data_recebimento_esperado = data_recebimento_esperado
@@ -20,6 +34,8 @@ class Receita:
         self.tipo_receita = tipo_receita
 
     def criar_tabela_receita():
+        """Cria uma tabela que representa as receitas.
+        """
         conexao = sqlite3.connect("controleFinancas.bd")
         conexao.execute("PRAGMA foreign_keys = 1")
         cursor = conexao.cursor()
@@ -38,6 +54,9 @@ class Receita:
         conexao.close()
 
     def salvar_receita(self):
+        """Insere os dados na tabela receita e adiciona o valor na conta 
+        correspondente.
+        """
         receita = (self.valor, self.data_recebimento, 
         self.data_recebimento_esperado, self.descricao, self.conta, 
         self.tipo_receita)
@@ -54,9 +73,16 @@ class Receita:
         conexao.close()
         conta.Conta.editar_conta(self.conta, 1, novo_saldo)
 
-    def editar_receita(id_receita, opcao, valor):
+    def editar_receita(id_receita: int, opcao: int, valor):
+        """Substitui um valor registrado em uma celula da tabela receita.
+
+        Args:
+            id_receita (int): Número de identificação da receita.
+            opcao (int): Opção escolhida pelo usuário que representa a coluna.
+            valor: Novo valor a ser inserido na célula.
+        """
         opcoes = {1:"dataRecebimento", 2:"dataRecebimentoEsperado",
-        3:"descricao", 4:"conta", 5:"tipoReceita"}
+        3:"descricao", 4:"tipoReceita"}
         conexao = sqlite3.connect("controleFinancas.bd")
         cursor = conexao.cursor()
         receita = cursor.execute("select * from receita where idReceita = ?", 
@@ -69,7 +95,12 @@ class Receita:
         conexao.commit()
         conexao.close()
 
-    def remover_receitas(id_receita):
+    def remover_receitas(id_receita: int):
+        """Remove uma linha representando uma receita na tabela.
+
+        Args:
+            id_receita (int): Número de identificação da receita.
+        """
         conexao = sqlite3.connect("controleFinancas.bd")
         cursor = conexao.cursor()
         receita = cursor.execute("select * from receita where idReceita = ?", 
@@ -82,7 +113,13 @@ class Receita:
         conexao.commit()
         conexao.close()
 
-    def listar_receitas_filtro(filtro, **valor):
+    def listar_receitas_filtro(filtro: int, **valor):
+        """Lista receitas a partir de um filtro (data ou tipo).
+
+        Args:
+            filtro (int): Valor que representa se o filtro será por data ou 
+            tipo.
+        """
         conexao = sqlite3.connect("controleFinancas.bd")
         cursor = conexao.cursor()
         match filtro:
@@ -99,6 +136,8 @@ class Receita:
         conexao.close()
 
     def listar_receitas_total():
+        """Lista todos os valores da tabela receita.
+        """
         conexao = sqlite3.connect("controleFinancas.bd")
         cursor = conexao.cursor()
         cursor.execute("select * from receita")

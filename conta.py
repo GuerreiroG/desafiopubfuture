@@ -12,11 +12,21 @@ class Conta:
     """
     def __init__(self, saldo: float, tipo_conta: str, 
     instituicao_financeira: str):
+        """Cria uma intância do objeto Conta
+
+        Args:
+            saldo (floar): Quantidade de dinheiro na conta.
+            tipo_conta (str): Tipo da conta (Ex: carteira, conta corrente, 
+            poupança).
+            instituicao_financeira (str): A instituição financeira. 
+        """
         self.saldo = saldo
         self.tipo_conta = tipo_conta
         self.instituicao_financeira = instituicao_financeira
 
     def criar_tabela_conta():
+        """Cria uma tabela que representa as contas.
+        """
         conexao = sqlite3.connect("controleFinancas.bd")
         cursor = conexao.cursor()
         cursor.execute("""
@@ -39,7 +49,14 @@ class Conta:
         conexao.commit()
         conexao.close()
 
-    def editar_conta(id_conta, opcao, valor):
+    def editar_conta(id_conta: int, opcao: int, valor):
+        """Substitui um valor registrado em uma celula da tabela conta.
+
+        Args:
+            id_conta (int): Número de identificação da conta.
+            opcao (int): Opção escolhida pelo usuário que representa a coluna.
+            valor: Novo valor a ser inserida na célula.
+        """
         opcoes = {1:"saldo", 2:"tipoConta", 3:"instituicaoFinanceira"}
         conexao = sqlite3.connect("controleFinancas.bd")
         cursor = conexao.cursor()
@@ -53,7 +70,12 @@ class Conta:
         conexao.commit()
         conexao.close()
 
-    def remover_conta(id_conta):
+    def remover_conta(id_conta: int):
+        """Remove uma linha representando uma conta na tabela.
+
+        Args:
+            id_conta (int): Número de identificação da conta.
+        """
         conexao = sqlite3.connect("controleFinancas.bd")
         cursor = conexao.cursor()
         conta = cursor.execute("select * from conta where idConta = ?", 
@@ -67,6 +89,8 @@ class Conta:
         conexao.close()
 
     def listar_contas():
+        """Lista todos os valores da tabela conta.
+        """
         conexao = sqlite3.connect("controleFinancas.bd")
         cursor = conexao.cursor()
         for linha in cursor.execute("select * from conta"):
@@ -74,7 +98,16 @@ class Conta:
         conexao.commit()
         conexao.close()
     
-    def tranferir_saldo(id_conta1, valor, id_conta2):
+    def tranferir_saldo(id_conta1: int, valor: float, id_conta2: int):
+        """Desconta certo valor do saldo de uma conta e acrescenta em outra.
+
+        Args:
+            id_conta1 (int): Número de identificação da conta que irá ter o valor 
+            descontado.
+            valor (float): valor a ser transferido.
+            id_conta2 (int): Número de identificação da conta que irá ter o valor
+            acrescentado.
+        """
         conexao = sqlite3.connect("controleFinancas.bd")
         cursor = conexao.cursor()
         cursor.execute("select saldo - ? from conta where \
@@ -92,7 +125,12 @@ class Conta:
         conexao.commit()
         conexao.close()
 
-    def listar_saldo(id_conta):
+    def listar_saldo(id_conta: int):
+        """Exibe o saldo de uma conta especificada.
+
+        Args:
+            id_conta (int): Número de identificação da conta.
+        """
         conexao = sqlite3.connect("controleFinancas.bd")
         cursor = conexao.cursor()
         cursor.execute("select saldo from conta where idConta = ?", 

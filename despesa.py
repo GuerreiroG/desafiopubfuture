@@ -11,6 +11,18 @@ class Despesa:
 
     def __init__(self, valor: float, data_pagamento: str,
     data_pagamento_esperado: str, conta: int, tipo_despesa: str):
+        """Cria uma instância do classe Despesa.
+
+        Args:
+            valor (float): Valor da despesa.
+            data_pagamento (str): Data em que o dinheiro foi pago.
+            data_pagamento_esperado (str): Data em que se esperava pagar o
+            dinheiro.
+            conta (int): Número de identificação da conta que pagou o 
+            dinheiro da despesa.
+            tipo_despesa (str): Tipo da despesa (alimentação, educação, lazer,
+            moradia, roupa, saúde, transporte etc.)
+        """
         self.valor = valor
         self.data_pagamento = data_pagamento
         self.data_pagamento_esperado = data_pagamento_esperado
@@ -18,10 +30,11 @@ class Despesa:
         self.tipo_despesa = tipo_despesa
 
     def criar_tabela_despesa():
+        """Cria uma tabela que representa as despesas.
+        """
         conexao = sqlite3.connect("controleFinancas.bd")
         conexao.execute("PRAGMA foreign_keys = 1")
         cursor = conexao.cursor()
-        cursor.execute("drop table despesa")
         cursor.execute("""
         create table if not exists despesa
         (idDespesa integer primary key,
@@ -36,22 +49,36 @@ class Despesa:
         conexao.close()
 
     def salvar_despesa(self):
+        """Insere os dados na tabela despesa e desconta o valor na conta 
+        correspondente.
+        """
         despesa = (self.valor, self.data_pagamento, 
         self.data_pagamento_esperado, self.conta, self.tipo_despesa)
         conexao = sqlite3.connect("controleFinancas.bd")
         conexao.execute("PRAGMA foreign_keys = 1")
         cursor = conexao.cursor()
-        cursor.execute("select conta from despesa")
-        cursor.execute("""insert into despesa values (null, ?, ?, ?, ?, ?)
-        """, despesa)
         cursor.execute("select saldo - ? from conta where idConta = ?", 
         (self.valor, self.conta))
         novo_saldo = cursor.fetchone()[0]
-        conexao.commit()
-        conexao.close()
-        conta.Conta.editar_conta(self.conta, 1, novo_saldo)
+        if novo_saldo < 0:
+            print("Saldo Insuficiente!")
+            conexao.commit()
+            conexao.close()
+        else:
+            cursor.execute("""insert into despesa values (null, ?, ?, ?, ?, ?)
+            """, despesa)
+            conexao.commit()
+            conexao.close()
+            conta.Conta.editar_conta(self.conta, 1, novo_saldo)
 
-    def editar_despesas(id_despesa, opcao, valor):
+    def editar_despesas(id_despesa: int, opcao: float, valor):
+        """Substitui um valor registrado em uma celula da tabela despesa.
+
+        Args:
+            id_despesa (int): Número de identificação da despesa.
+            opcao (int): Opção escolhida pelo usuário que representa a coluna.
+            valor: Novo valor a ser inserido na célula.
+        """
         opcoes = {1:"dataPagamento", 2:"dataPagamentoEsperado",
         3:"descricao", 4:"conta", 5:"tipoPagamento"}
         conexao = sqlite3.connect("controleFinancas.bd")
@@ -67,6 +94,11 @@ class Despesa:
         conexao.close()
 
     def remover_despesas(id_despesa):
+        """Remove uma linha representando uma despesa na tabela.
+
+        Args:
+            id_despesa (int): Número de identificação da despesa.
+        """
         conexao = sqlite3.connect("controleFinancas.bd")
         cursor = conexao.cursor()
         despesa = cursor.execute("select * from despesa where idDespesa = ?", 
@@ -80,6 +112,12 @@ class Despesa:
         conexao.close()
 
     def listar_despesas_filtro(filtro, **valor):
+        """Lista despesas a partir de um filtro (data ou tipo).
+
+        Args:
+            filtro (int): Valor que representa se o filtro será por data ou 
+            tipo.
+        """
         conexao = sqlite3.connect("controleFinancas.bd")
         cursor = conexao.cursor()
         match filtro:
@@ -96,6 +134,8 @@ class Despesa:
         conexao.close()
 
     def listar_despesas_total():
+        """Lista todos os valores da tabela despesa.
+        """
         conexao = sqlite3.connect("controleFinancas.bd")
         cursor = conexao.cursor()
         cursor.execute("select * from despesa")
