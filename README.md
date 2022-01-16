@@ -2,13 +2,13 @@
 Um simples sistema feito em Python 3.10.0
 
 ---
-## Tabela de Conteúdos
+## Lista de Conteúdos
 * [Introdução](#introducao)
 * [Tecnologias](#tecnologias)
-* [Inicialização](#inicializacao)
+* [Inicialização](#inicialização)
 * [Escopo das Funcionalidades](#escopo-das-funcionalidades)
 * [Como Utilizar o Programa](#como-utilizar-o-programa)
-* [Informações Extras](#informacoes-extras)
+* [Informações Extras](#informações-extras)
 
 ---
 
@@ -33,7 +33,7 @@ python interface.py
 Neste momento o programa deverá exibir opções para o usuário selecionar, então basta digitar o número correspondente a opção selecionado e apertar a tecla "Enter", e depois preencher com os dados que o programa pedir. Apertando "Enter" após o dado ser digitado.
 
 ---
-## Escopo das funcionalidades.
+## Escopo das funcionalidades
 O programa possui diversas funcionaliades, dentre elas pode-se citar:
 - Cadastro de contas, receitas e depesas.
 - Remoção, edição e listagem de contas, receitas e depesas cadastradas.
